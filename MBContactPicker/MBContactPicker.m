@@ -301,7 +301,6 @@ CGFloat const kAnimationSpeed = .25;
              [self.contactCollectionView setFocusOnEntry];
         }];
         
-        [self showSearchTableView];
         NSString *searchString = [text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         NSPredicate *predicate;
         
@@ -314,6 +313,7 @@ CGFloat const kAnimationSpeed = .25;
             predicate = [NSPredicate predicateWithFormat:@"contactTitle contains[cd] %@ && !SELF IN %@", searchString, self.contactCollectionView.selectedContacts];
         }
         self.filteredContacts = [self.contacts filteredArrayUsingPredicate:predicate];
+        [self showSearchTableView];
         [self.searchTableView reloadData];
     }
 }
@@ -399,6 +399,9 @@ CGFloat const kAnimationSpeed = .25;
 - (void)showSearchTableView
 {
     if (self.filteredContacts.count == 0) {
+        if (!self.searchTableView.hidden) {
+            [self hideSearchTableView];
+        }
         return;
     }
     self.searchTableView.hidden = NO;
