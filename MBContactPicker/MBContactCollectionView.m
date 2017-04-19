@@ -10,6 +10,7 @@
 #import "MBContactCollectionViewEntryCell.h"
 #import "MBContactCollectionViewPromptCell.h"
 #import "MBContactCollectionViewFlowLayout.h"
+#import "MBContactPicker.h"
 
 NSInteger const kCellHeight = 31;
 NSString * const kPrompt = @"To:";
@@ -408,6 +409,7 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+//    [self.superview resignFirstResponder];
     MBContactCollectionViewContactCell *cell = (MBContactCollectionViewContactCell *)[collectionView cellForItemAtIndexPath:indexPath];
     [self becomeFirstResponder];
     cell.mbfocused = YES;
@@ -532,6 +534,9 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     NSIndexPath *pathForSelectedItem = self.indexPathOfSelectedCell;
     if (pathForSelectedItem != nil) {
+        //Hiding searchTableViewAfterSelection
+        MBContactPicker *picker = (MBContactPicker *)self.superview;
+        [picker forceHideSearchTableView];
         return;
     }
     [self.superview resignFirstResponder];

@@ -421,6 +421,10 @@ CGFloat const kAnimationSpeed = .25;
     }
 }
 
+- (void)forceHideSearchTableView {
+    [self hideSearchTableView];
+}
+
 - (void)updateCollectionViewHeightConstraints
 {
     for (NSLayoutConstraint *constraint in self.constraints)

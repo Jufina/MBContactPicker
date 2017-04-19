@@ -54,6 +54,7 @@ typedef void(^CompletionBlock)();
 @property (nonatomic) BOOL showPrompt;
 @property (nonatomic, strong) UIFont *font UI_APPEARANCE_SELECTOR;
 
+- (void)forceHideSearchTableView;
 - (void)reloadData;
 - (void)addToSelectedContacts:(id<MBContactPickerModelProtocol>)model;
 - (void)addToSelectedContacts:(id<MBContactPickerModelProtocol>)model withCompletion:(CompletionBlock)completion;
