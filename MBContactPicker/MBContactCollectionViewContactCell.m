@@ -99,4 +99,11 @@
     }
 }
 
+- (void)prepareForReuse {
+    [super prepareForReuse];
+    
+    self.model = nil;
+    self.mbfocused = false;
+}
+
 @end
