@@ -71,9 +71,9 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 {
     CGFloat origWidth = self.frame.size.width;
     [self.collectionViewLayout invalidateLayout];
-
+    
     [super setFrame:frame];
-
+    
     [self handleWidthChangeFrom:origWidth to:frame.size.width];
 }
 
@@ -96,11 +96,17 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 
 - (void) reloadData
 {
+    
+    [UIView setAnimationsEnabled:NO];
+    
+    [self performBatchUpdates:^{
+        [super reloadSections: [NSIndexSet indexSetWithIndex:0] ];
+    } completion:^(BOOL finished) {
+        MBContactCollectionViewFlowLayout *layout = (MBContactCollectionViewFlowLayout*)self.collectionViewLayout;
+        [layout finalizeCollectionViewUpdates];
+        [UIView setAnimationsEnabled:YES];
+    }];
     [super reloadData];
-    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 1*NSEC_PER_SEC);
-    dispatch_after(time, dispatch_get_main_queue(), ^{
-        [self forceRelayout];
-    });
 }
 
 - (void)forceRelayout
@@ -109,7 +115,13 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
     // but that was leading to an untimely access to the layout object after it had be dealloc'd during
     // view destruction. It seems some event was being queued up after the dealloc had been scheduled.
     MBContactCollectionViewFlowLayout *layout = (MBContactCollectionViewFlowLayout*)self.collectionViewLayout;
-    [layout finalizeCollectionViewUpdates];
+    [super performBatchUpdates:^{
+        [self setNeedsLayout];
+        [self layoutSubviews];
+    } completion:^(BOOL finished) {
+        [super reloadData];
+    }];
+    //    [layout finalizeCollectionViewUpdates];
 }
 
 - (void)setup
@@ -412,7 +424,7 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-//    [self.superview resignFirstResponder];
+    //    [self.superview resignFirstResponder];
     MBContactCollectionViewContactCell *cell = (MBContactCollectionViewContactCell *)[collectionView cellForItemAtIndexPath:indexPath];
     [self becomeFirstResponder];
     cell.mbfocused = YES;
@@ -493,7 +505,7 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
     else if ([self isEntryCell:indexPath])
     {
         MBContactCollectionViewEntryCell *cell = (MBContactCollectionViewEntryCell *)[collectionView dequeueReusableCellWithReuseIdentifier:@"ContactEntryCell"
-                                                                                                                           forIndexPath:indexPath];
+                                                                                                                               forIndexPath:indexPath];
         
         cell.delegate = self;
         collectionCell = cell;
@@ -502,14 +514,14 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
         {
             [cell setFocus];
         }
-
+        
         cell.text = self.searchText;
         cell.enabled = self.allowsTextInput;
     }
     else
     {
         MBContactCollectionViewContactCell *cell = (MBContactCollectionViewContactCell*)[collectionView dequeueReusableCellWithReuseIdentifier:@"ContactCell"
-                                                                                                                forIndexPath:indexPath];
+                                                                                                                                  forIndexPath:indexPath];
         cell.model = self.selectedContacts[[self selectedContactIndexFromIndexPath:indexPath]];
         if ([self.indexPathOfSelectedCell isEqual:indexPath])
         {
@@ -563,8 +575,8 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
             NSIndexPath *newSelectedIndexPath = [NSIndexPath indexPathForItem:self.selectedContacts.count - (self.showPrompt ? 0 : 1)
                                                                     inSection:0];
             [self selectItemAtIndexPath:newSelectedIndexPath
-                                                     animated:YES
-                                               scrollPosition:UICollectionViewScrollPositionBottom];
+                               animated:YES
+                         scrollPosition:UICollectionViewScrollPositionBottom];
             [self.delegate collectionView:self didSelectItemAtIndexPath:newSelectedIndexPath];
             [self becomeFirstResponder];
         }
