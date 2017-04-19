@@ -97,7 +97,10 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 - (void) reloadData
 {
     [super reloadData];
-    [self forceRelayout];
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 1*NSEC_PER_SEC);
+    dispatch_after(time, dispatch_get_main_queue(), ^{
+        [self forceRelayout];
+    });
 }
 
 - (void)forceRelayout
