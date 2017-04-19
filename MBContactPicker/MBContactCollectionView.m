@@ -523,10 +523,17 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 #pragma mark - UITextFieldDelegateImproved
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if ([textField.text isEqualToString:@" "]) {
+        return;
+    }
     [self.superview becomeFirstResponder];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
+    NSIndexPath *pathForSelectedItem = self.indexPathOfSelectedCell;
+    if (pathForSelectedItem != nil) {
+        return;
+    }
     [self.superview resignFirstResponder];
 }
 

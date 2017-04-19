@@ -328,6 +328,7 @@ CGFloat const kAnimationSpeed = .25;
 
 - (void)contactCollectionView:(MBContactCollectionView*)contactCollectionView didAddContact:(id<MBContactPickerModelProtocol>)model
 {
+    self.filteredContacts = nil;
     if ([self.delegate respondsToSelector:@selector(contactCollectionView:didAddContact:)])
     {
         [self.delegate contactCollectionView:contactCollectionView didAddContact:model];
