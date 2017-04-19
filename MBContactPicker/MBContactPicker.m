@@ -383,12 +383,14 @@ CGFloat const kAnimationSpeed = .25;
             [self.contactCollectionView setFocusOnEntry];
         }
     }
+    [self showSearchTableView];
     
     return YES;
 }
 
 - (BOOL)resignFirstResponder
 {
+    [self hideSearchTableView];
     return [self.contactCollectionView resignFirstResponder];
 }
 
@@ -396,6 +398,9 @@ CGFloat const kAnimationSpeed = .25;
 
 - (void)showSearchTableView
 {
+    if (self.filteredContacts.count == 0) {
+        return;
+    }
     self.searchTableView.hidden = NO;
     if ([self.delegate respondsToSelector:@selector(didShowFilteredContactsForContactPicker:)])
     {

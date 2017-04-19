@@ -229,6 +229,12 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
     return YES;
 }
 
+//- (BOOL)becomeFirstResponder {
+//    [super becomeFirstResponder];
+//    NSLog(@"BECOME FIRST RESPONDER");
+//    return YES;
+//}
+
 #pragma mark - UIKeyInput
 
 - (void) deleteBackward
@@ -515,6 +521,14 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
 }
 
 #pragma mark - UITextFieldDelegateImproved
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self.superview becomeFirstResponder];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self.superview resignFirstResponder];
+}
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
